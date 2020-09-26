@@ -8,6 +8,7 @@ package com.archimatetool.editor.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -33,6 +34,7 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.service.prefs.BackingStoreException;
 
 import com.archimatetool.editor.ui.ThemeUtils;
 import com.archimatetool.editor.utils.PlatformUtils;
@@ -56,6 +58,7 @@ implements IWorkbenchPreferencePage, IPreferenceConstants {
     
     private ComboViewer fThemeComboViewer;
     
+    private Button fUseRoundTabsButton;
     private Button fShowStatusLineButton;
     
     private Button fShowUnusedElementsInModelTreeButton;
@@ -139,6 +142,11 @@ implements IWorkbenchPreferencePage, IPreferenceConstants {
         
         fThemeComboViewer.setComparator(new ViewerComparator());
         
+        // Use Round Tabs
+        fUseRoundTabsButton = new Button(appearanceGroup, SWT.CHECK);
+        fUseRoundTabsButton.setText(Messages.GeneralPreferencePage_19);
+        fUseRoundTabsButton.setLayoutData(createHorizontalGridData(2));
+        
         // Show Status Line
         fShowStatusLineButton = new Button(appearanceGroup, SWT.CHECK);
         fShowStatusLineButton.setText(Messages.GeneralPreferencePage_9);
@@ -211,6 +219,7 @@ implements IWorkbenchPreferencePage, IPreferenceConstants {
         fBackupOnSaveButton.setSelection(getPreferenceStore().getBoolean(BACKUP_ON_SAVE));
         fOpenDiagramsOnLoadButton.setSelection(getPreferenceStore().getBoolean(OPEN_DIAGRAMS_ON_LOAD));
         
+        fUseRoundTabsButton.setSelection(ThemeUtils.getSwtRendererPreferences().getBoolean(ThemeUtils.USE_ROUND_TABS, false));
         fShowStatusLineButton.setSelection(getPreferenceStore().getBoolean(SHOW_STATUS_LINE));
         
         fShowUnusedElementsInModelTreeButton.setSelection(getPreferenceStore().getBoolean(HIGHLIGHT_UNUSED_ELEMENTS_IN_MODEL_TREE));
@@ -248,6 +257,17 @@ implements IWorkbenchPreferencePage, IPreferenceConstants {
         getPreferenceStore().setValue(OPEN_DIAGRAMS_ON_LOAD, fOpenDiagramsOnLoadButton.getSelection());
         getPreferenceStore().setValue(MRU_MAX, fMRUSizeSpinner.getSelection());
         
+        
+        IEclipsePreferences prefs = ThemeUtils.getSwtRendererPreferences();
+        prefs.putBoolean(ThemeUtils.USE_ROUND_TABS, fUseRoundTabsButton.getSelection());
+        
+        try {
+            // Have to do this for it to persist
+            prefs.flush();
+        }
+        catch(BackingStoreException ex) {
+        }
+        
         getPreferenceStore().setValue(SHOW_STATUS_LINE, fShowStatusLineButton.getSelection());
         
         getPreferenceStore().setValue(HIGHLIGHT_UNUSED_ELEMENTS_IN_MODEL_TREE, fShowUnusedElementsInModelTreeButton.getSelection());
@@ -271,6 +291,7 @@ implements IWorkbenchPreferencePage, IPreferenceConstants {
         fOpenDiagramsOnLoadButton.setSelection(getPreferenceStore().getDefaultBoolean(OPEN_DIAGRAMS_ON_LOAD));
         fMRUSizeSpinner.setSelection(getPreferenceStore().getDefaultInt(MRU_MAX));
         
+        fUseRoundTabsButton.setSelection(false);
         fShowStatusLineButton.setSelection(getPreferenceStore().getDefaultBoolean(SHOW_STATUS_LINE));
         
         fShowUnusedElementsInModelTreeButton.setSelection(getPreferenceStore().getDefaultBoolean(HIGHLIGHT_UNUSED_ELEMENTS_IN_MODEL_TREE));
