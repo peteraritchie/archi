@@ -18,5 +18,9 @@
         <unit id="org.eclipse.gef.sdk.feature.group" version="3.11.0.201606061308"/>
         <unit id="org.eclipse.zest.sdk.feature.group" version="1.7.0.201606061308"/>
     </location>
+    <location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+        <repository location="https://equo-chromium-cef.ams3.digitaloceanspaces.com/rls/repository"/>
+        <unit id="com.make.chromium.cef.feature.feature.group" version="0.4.0.202005172227"/>
+    </location>
 </locations>
 </target>
